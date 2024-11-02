@@ -1,0 +1,1 @@
+# (c) Legacy of Modern Progress Corporation – 2024

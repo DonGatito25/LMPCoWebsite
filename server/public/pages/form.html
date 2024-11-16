@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="../../../assets/icon.png">
+  <link rel="stylesheet" href="../styling/form.css">
+  <title>Sign In</title>
+</head>
+
+<body>
+  <div class="container" id="one">
+    <div class="card">
+      <div class="inner-box" id="card">
+        <div class="card-front">
+          <h2>SIGN IN</h2>
+          <form id="signInForm">
+            <input type="email" class="input-box" id="signInEmail" placeholder="Email" required>
+            <input type="password" class="input-box" id="signInPassword" placeholder="Password" required>
+            <button type="submit" class="submit-btn">Log In</button>
+            <input type="checkbox"><span>Remember Me</span>
+          </form>
+          <button type="button" class="btn" onclick="openRegister()">New Member?</button>
+          <a class="update-account">Update Account</a>
+          <a class="delete-account">Delete Account</a>
+        </div>
+        <div class="card-back">
+          <h2>REGISTER</h2>
+          <form action="/submit-form" method="POST">
+            <input type="text" class="input-box" id="name" name="name" placeholder="Username" required>
+            <input type="email" class="input-box" id="email" name="email" placeholder="Email"
+              pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$" required>
+            <input type="password" class="input-box" id="password" name="password" placeholder="Password"
+              pattern="(?=.*/d)(?=.*[a-z])(?=.*{A-Z}),{8,}" required>
+            <button type="submit" class="submit-btn">Create Account</button>
+            <input type="checkbox"><span>Remember Me</span>
+          </form>
+          <button type="button" class="btn" onclick="openLogin()">Already have an account?</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--  -->
+  <div class="container" id="two">
+    <div class="card">
+      <div class="inner-box" id="card">
+        <div class="card-front" id="user-settings">
+          <h2>UPDATE ACCOUNT</h2>
+          <form id="updateForm">
+            <input type="text" class="input-box" id="currentName" placeholder="Current Name" required />
+            <input type="email" class="input-box" id="currentEmail" placeholder="Current Email" required />
+            <input type="password" class="input-box" id="currentPassword" placeholder="Current Password" required />
+            <input type="text" class="input-box" id="newName" placeholder="New Name" required />
+            <input type="email" class="input-box" id="newEmail" placeholder="New Email" required />
+            <input type="password" class="input-box" id="newPassword" placeholder="New Password" required />
+            <input type="submit" class="submit-btn" value="Update User">
+            <input type="checkbox"><span>Remember Me</span>
+          </form>
+          <a href="" class="back-to-login">Back to Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--  -->
+  <div class="container" id="three">
+    <div class="card">
+      <div class="inner-box" id="card">
+        <div class="card-front">
+          <h2>DELETE ACCOUNT</h2>
+          <form id="delete-user">
+            <input type="text" class="input-box" id="delete-name" placeholder="Name" required>
+            <input type="email" class="input-box" id="delete-email" placeholder="Email" required>
+            <input type="password" class="input-box" id="delete-password" placeholder="Password" required>
+            <button type="submit" class="submit-btn">Delete</button>
+            <input type="checkbox"><span>Remember Me</span>
+          </form>
+          <a href="" class="back-to-login">Back to Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.getElementById("updateForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const currentName = document.getElementById("currentName").value;
+      const currentEmail = document.getElementById("currentEmail").value;
+      const currentPassword = document.getElementById("currentPassword").value;
+      const newName = document.getElementById("newName").value;
+      const newEmail = document.getElementById("newEmail").value;
+      const newPassword = document.getElementById("newPassword").value;
+      //
+      try {
+        const response = await fetch(
+          `/update-user/${currentName}/${currentEmail}/${currentPassword}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ newName, newEmail, newPassword }),
+          }
+        );
+        //
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        alert("Error updating user: " + error.message);
+      }
+    });
+    document.getElementById("delete-user").addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("delete-name").value;
+      const email = document.getElementById("delete-email").value;
+      const password = document.getElementById("delete-password").value;
+      try {
+        const response = await fetch(`/user/${name}/${email}/${password}`, {
+          method: "DELETE",
+        });
+        //
+        if (!response.ok) {
+          throw new Error("Problem fetching delete endpoint");
+        }
+        //
+        const data = await response.text();
+        console.log(data);
+      } catch (error) {
+        console.error("Uh oh, there was a a problem! " + error.message + ".");
+      }
+    });
+    //
+    var card = document.getElementById("card");
+    //
+    function openRegister() {
+      card.style.transform = "rotateY(-180deg)";
+      document.title = "Register"
+    }
+    //
+    function openLogin() {
+      card.style.transform = "rotateY(0deg)";
+      document.title = "Sing In"
+    }
+    //
+    document.addEventListener('DOMContentLoaded', (e) => {
+      e.preventDefault();
+      const loginRegisterForm = document.getElementById("one");
+      const updateForm = document.getElementById("two");
+      updateForm.classList.add("hidden");
+      const deleteForm = document.getElementById("three");
+      deleteForm.classList.add("hidden");
+      //
+      document.querySelector(".update-account").addEventListener("click", (e) => {
+        e.preventDefault();
+        loginRegisterForm.classList.add("hidden");
+        deleteForm.classList.add("hidden");
+        updateForm.classList.remove("hidden");
+      });
+      document.querySelector(".delete-account").addEventListener("click", (e) => {
+        e.preventDefault();
+        loginRegisterForm.classList.add("hidden");
+        updateForm.classList.add("hidden");
+        deleteForm.classList.remove("hidden");
+      });
+      const loginReturns = document.querySelectorAll(".back-to-login");
+      loginReturns.forEach(loginReturn => {
+        loginReturn.addEventListener("click", (e) => {
+          e.preventDefault();
+          updateForm.classList.add("hidden");
+          deleteForm.classList.add("hidden");
+          loginRegisterForm.classList.remove("hidden");
+        });
+      });
+    });
+    //
+    document
+      .getElementById("signInForm")
+      .addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("signInEmail").value;
+        const password = document.getElementById("signInPassword").value;
+        //
+        try {
+          const response = await fetch("/sign-in", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          });
+          //
+          if (!response.ok) {
+            throw new Error("User not found");
+          }
+          //
+          const user = await response.json();
+          //
+          localStorage.setItem("currentUser", JSON.stringify(user));
+          //
+          window.location.href = "/deelish";
+        } catch (error) {
+          alert("Sign-In Failed: " + error.message);
+        }
+      });
+    //
+    document.addEventListener("DOMContentLoaded", renderUsers);
+    document.addEventListener("DOMContentLoaded", () => {
+      const currentUser = localStorage.getItem("currentUser");
+      if (currentUser) {
+        window.location.href = "/deelish";
+      }
+    });
+  </script>
+  </div>
+</body>
+
+</html>

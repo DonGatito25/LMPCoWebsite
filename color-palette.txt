@@ -1,0 +1,8 @@
+White:       #FFFFFF
+Not-White:   #EDEDED
+Cyan:        #48A4E1
+Blue:        #487EE1
+Purple:      #4855E1
+Black:       #333333
+
+Gold:        #EDAC15
